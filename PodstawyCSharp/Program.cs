@@ -7,7 +7,7 @@
 
     
 /* [Pobieranie wartości] */
-    // string? lines = Console.ReadLine();
+    string? lines = Console.ReadLine();
 }
 
 // 2. Typy i zmienne
@@ -46,7 +46,8 @@
     int[] myIntArr = new int[3];
     int[,] myIntArr2 = new int[2, 2]; // Notka: w .NET wielowymiarowość w arrayu definiuje się poprzez
                                       // dodawanie przecinków do []. Tak samo przy deklarowaniu wielkości
-                                      // poszczeŋólnych wymiarów. Java: int[2][2]; CSharp: int[2,2];
+                                      // poszczeŋólnych wymiarów: Java: int[2][2]; CSharp: int[2,2];
+                                      // oraz późniejszym dostawaniu się do wartości na poszczególnych indeksach.
                                       // https://www.w3schools.com/cs/cs_arrays_multi.php
 
     // Wybrane kolekcje, które też są typami referencyjnymi:
@@ -88,6 +89,33 @@
 
     // string normalString = null; // typ referencyjny ale bez zezwolenia na nulla - warning podczas kompialcji
     string? nullableString = null;
+    
+    // [Praca z wartością null]
+    // Podstawowe sprawdzenie
+    if (nullableInt == null) {}
+    if (nullableString != null) {}
+    if (nullableInt is null) {}
+    if (nullableString is not null) {}
+    
+    // Notka: w nowych wersjach C# preferowane jest używanie składni "is" oraz "is not".
+    
+    // Operator ??
+    var myValue = nullableInt ?? 10; // Operacja polegająca na zwróceniu wartości nienullowalnej.
+                                        // Jeżeli pod zmienną nullableInt jest przechowywany null, to zwróć 10. 
+                                        // Odpowiednik następującego wyrażenia tenarnego:
+                                        var myValue2 = nullableInt is null ? 10 : nullableInt;
+                                        
+    // Operator ??=
+    nullableInt ??= 10; // Operacja polegająca na sprawdzeniu, czy pod jakąś zmienną przechowywana jest
+                        // wartość null - jeżeli tak, to podstawiamy pod nią wartość,
+                        // zdefiniowaną po prawej stronie wyrażenia.
+                        
+    // Operator ?
+    var myString = nullableString?.Contains("Hello"); // Operator opcjonalnego wywołania - jeżeli obiekt,
+                                                           // na którym próbujemy wywołać metodę jest nullem,
+                                                           // to nie wykonujemy jej - jeżeli jest to metoda,
+                                                           // która zwraca jakąś wartość, to w wypadku nie wywołania jej,
+                                                           // zwracana jest wartość null.
 }
 
 // 3. Decyzje i pętle 
@@ -161,6 +189,19 @@
     Console.WriteLine(square.Width); // Przeczytanie wartości property
     Console.WriteLine(square);
     Console.WriteLine(rect);
+
+    try
+    {
+        throw new MyException("Testowy error");
+    }
+    catch (MyException e)
+    {
+        Console.WriteLine(e.Message);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine("Nieznany błąd");
+    }
 }
 
 // 5. Praca z plikami
@@ -186,6 +227,8 @@ public interface IFigure
 // [Klasy]
 public class Square(double width) : IFigure
 {
+    // Notka: w C# nie tworzy się zwykłych getterów oraz setterów do pól klasowych. Korzysta się z propsów:
+    // https://www.w3schools.com/cs/cs_properties.php
     public double Width { get; set; } = width;
     
     // Notka: Metody, które chcemy żeby były nadpisywalne
@@ -239,3 +282,6 @@ public class Rectangle(double height, double width) : Square(width)
         return $"Height: {Height}, {base.ToString()}"; // wywołanie base - wywołanie implementacji z klasy bazowej
     }
 }
+
+// [Wyjątek]
+public class MyException(string message) : Exception(message);
